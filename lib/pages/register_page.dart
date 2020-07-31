@@ -115,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return null;
                         },
                         onSaved: (newValue) {
-                          user.name = newValue;
+                          _user.name = newValue;
                         },
                       ),
                       SizedBox(height: 8),
@@ -134,13 +134,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           return null;
                         },
                         onFieldSubmitted: (value) {
-                          setState(() {
-                            _criptoEmail = value.toLowerCase().trim();
-                          });
+                          setState(() {});
                         },
                         onSaved: (newValue) {
                           user.email = newValue;
-                          _criptoEmail = newValue.toLowerCase().trim();
                         },
                       ),
                       SizedBox(height: 8),
