@@ -1,5 +1,7 @@
 import 'package:aula_27_flutter_exercicio_dupla/bd/bd.dart';
 import 'package:aula_27_flutter_exercicio_dupla/entities/user.dart';
+import 'package:aula_27_flutter_exercicio_dupla/pages/home_page.dart';
+import 'package:aula_27_flutter_exercicio_dupla/repository/user_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:cnpj_cpf_helper/cnpj_cpf_helper.dart';
@@ -26,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   User _user = User();
-  final userRepository = ProductRepository(Db());
+  final userRepository = UserRepository(Db());
 
   @override
   void dispose() {
@@ -137,7 +139,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           setState(() {});
                         },
                         onSaved: (newValue) {
-                          user.email = newValue;
+                          _user.email = newValue;
                         },
                       ),
                       SizedBox(height: 8),
@@ -161,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return null;
                         },
                         onSaved: (newValue) {
-                          user.cpf = newValue;
+                          _user.cpf = newValue;
                         },
                       ),
                       SizedBox(height: 8),
@@ -186,7 +188,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.cep = newValue;
+                                _user.cep = newValue;
                               },
                             ),
                           ),
@@ -227,7 +229,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.street = newValue;
+                                _user.street = newValue;
                               },
                             ),
                           ),
@@ -248,7 +250,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.numberHouse = newValue;
+                                _user.numberHouse = newValue;
                               },
                             ),
                           ),
@@ -275,7 +277,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.neighborhood = newValue;
+                                _user.neighborhood = newValue;
                               },
                             ),
                           ),
@@ -298,7 +300,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.city = newValue;
+                                _user.city = newValue;
                               },
                             ),
                           ),
@@ -326,7 +328,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.state = newValue;
+                                _user.state = newValue;
                               },
                             ),
                           ),
@@ -340,6 +342,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                   hintText: 'País',
                                   hintStyle: TextStyle(color: Colors.blue),
                                   labelText: _country),
+                              onSaved: (newValue) {
+                                _user.country = _country;
+                              },
                             ),
                           ),
                         ],
@@ -370,8 +375,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
                         _formKey.currentState.save();
+
                         _onSucess();
-                        _dialogInfo();
                       }
                     },
                     borderSide: BorderSide(color: Colors.black),
@@ -386,40 +391,12 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-//caixa de dialogo quando termina o cadastro
-  void _dialogInfo() {
-    showDialog(
-        context: context,
-        builder: (ctx) {
-          return AlertDialog(
-            title: Text(
-              'Dados: ${user.name}',
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Text(
-                    'ok',
-                  ))
-            ],
-            content: Text('Nome:\n${user.name}\n'
-                'Email:\n ${user.email}\n'
-                'Cpf:\n ${user.cpf}\n'
-                'Endereço:\n'
-                'Rua: ${user.address.street},Numero: ${user.address.numberHouse},\n'
-                'Bairro: ${user.address.neighborhood},Cidade: ${user.address.city}\n'
-                'País: $_country\n'),
-          );
-        });
-  }
-
   void _onSucess() {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
       content: Text("Usuario Criado com sucesso!"),
       backgroundColor: Colors.red,
       duration: Duration(seconds: 3),
     ));
+    Navigator.of(context).pushNamed(HomePage.routeName);
   }
 }
