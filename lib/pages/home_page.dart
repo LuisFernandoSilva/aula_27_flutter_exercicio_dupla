@@ -1,11 +1,25 @@
+import 'package:aula_27_flutter_exercicio_dupla/bd/bd.dart';
+import 'package:aula_27_flutter_exercicio_dupla/entities/user.dart';
+import 'package:aula_27_flutter_exercicio_dupla/pages/register_page.dart';
+import 'package:aula_27_flutter_exercicio_dupla/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
+  static String routeName = '/';
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  UserRepository repository;
+
+  @override
+  void initState() {
+    super.initState();
+    repository = UserRepository(Db());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,8 +33,8 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
-      body: FutureBuilder<List<Product>>(
-        future: repository.recoverProduct(),
+      body: FutureBuilder<List<User>>(
+        future: repository.getUsers(),
         initialData: null,
         builder: (ctx, snapshot) {
           if (!snapshot.hasData && !snapshot.hasError) {
@@ -36,36 +50,25 @@ class _HomePageState extends State<HomePage> {
 
           return Padding(
             padding: const EdgeInsets.all(8),
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: 16 / 9,
-              ),
+            child: ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamed(RegProductPage.routeName,
+                    Navigator.of(context).pushNamed(RegisterPage.routeName,
                         arguments: snapshot.data[index]);
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: FadeInImage(
-                      placeholder: AssetImage("assets/loading.gif"),
-                      image: AssetImage(snapshot.data[index].photo),
-                    ),
-                  ),
                 );
               },
             ),
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.of(context).pushNamed(RegisterPage.routeName);
+          }),
     );
   }
 }
