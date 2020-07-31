@@ -1,13 +1,13 @@
-import 'dart:convert';
-
+import 'package:aula_27_flutter_exercicio_dupla/bd/bd.dart';
+import 'package:aula_27_flutter_exercicio_dupla/entities/user.dart';
 import 'package:dio/dio.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:cnpj_cpf_helper/cnpj_cpf_helper.dart';
 import 'package:cnpj_cpf_formatter/cnpj_cpf_formatter.dart';
 import 'package:flutter/material.dart';
-import 'package:crypto/crypto.dart';
 
 class RegisterPage extends StatefulWidget {
+  static String routeName = '/register_page';
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
@@ -25,8 +25,22 @@ class _RegisterPageState extends State<RegisterPage> {
   String _country = 'Brasil';
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
+  User _user = User();
+  final userRepository = ProductRepository(Db());
 
-  var _criptoEmail = 'l.gameseanimes@gmail.com.br';
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _cpfController.dispose();
+    _cepController.dispose();
+    _streetController.dispose();
+    _numberHouseController.dispose();
+    _neighborhoodController.dispose();
+    _cityController.dispose();
+    _stateController.dispose();
+    super.dispose();
+  }
 
   void _restart() {
     _formKey.currentState.reset();
@@ -101,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return null;
                         },
                         onSaved: (newValue) {
-                          user.name = newValue;
+                          _user.name = newValue;
                         },
                       ),
                       SizedBox(height: 8),
@@ -120,13 +134,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           return null;
                         },
                         onFieldSubmitted: (value) {
-                          setState(() {
-                            _criptoEmail = value.toLowerCase().trim();
-                          });
+                          setState(() {});
                         },
                         onSaved: (newValue) {
                           user.email = newValue;
-                          _criptoEmail = newValue.toLowerCase().trim();
                         },
                       ),
                       SizedBox(height: 8),
