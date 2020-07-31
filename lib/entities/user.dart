@@ -24,7 +24,7 @@ class User {
       this.state,
       this.country});
 
-  factory User.ofMap(Map<String, dynamic> map) {
+  factory User.fromMap(Map<String, dynamic> map) {
     return User(
       id: map['id'],
       name: map['name'],

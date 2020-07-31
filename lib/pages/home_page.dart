@@ -1,6 +1,8 @@
+import 'package:aula_27_flutter_exercicio_dupla/entities/user.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
+  static String routeName = '/';
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -19,8 +21,8 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
-      body: FutureBuilder<List<Product>>(
-        future: repository.recoverProduct(),
+      body: FutureBuilder<List<User>>(
+        future: user_repository.recoverProduct(),
         initialData: null,
         builder: (ctx, snapshot) {
           if (!snapshot.hasData && !snapshot.hasError) {
