@@ -1,8 +1,9 @@
-import '../bd/bd.dart';
-import '../entities/user.dart';
+import 'package:aula_27_flutter_exercicio_dupla/bd/bd.dart';
+import 'package:aula_27_flutter_exercicio_dupla/entities/user.dart';
 
 class UserRepository {
-  final Db _dbHelper = Db();
+  final Db _dbHelper;
+  UserRepository(this._dbHelper);
 
   Future<bool> newUser(User obj) async {
     var db = await _dbHelper.recoverInstance();
@@ -36,6 +37,6 @@ class UserRepository {
         retorno.add(User.fromMap(user));
       }
     }
-    return retorno;
+    return retorno ?? [];
   }
 }
