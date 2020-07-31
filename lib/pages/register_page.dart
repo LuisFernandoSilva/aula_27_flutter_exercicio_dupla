@@ -15,8 +15,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
+  TextEditingController _nameController;
+  TextEditingController _emailController;
   final _cpfController = TextEditingController();
   final _cepController = TextEditingController();
   final _streetController = TextEditingController();
@@ -42,6 +42,18 @@ class _RegisterPageState extends State<RegisterPage> {
     _cityController.dispose();
     _stateController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final user = ModalRoute.of(context).settings.arguments as User;
+
+    _nameController = TextEditingController(text: user?.name ?? '');
+    _emailController = TextEditingController(text: user?.email ?? '');
+
+    _user.name = user?.name ?? null;
+    _user.id = user?.id ?? null;
   }
 
   void _restart() {
@@ -375,6 +387,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
                         _formKey.currentState.save();
+                        userRepository.newUser(_user);
 
                         _onSucess();
                       }
