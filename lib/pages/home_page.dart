@@ -1,7 +1,8 @@
 import 'package:aula_27_flutter_exercicio_dupla/bd/bd.dart';
 import 'package:aula_27_flutter_exercicio_dupla/entities/user.dart';
 import 'package:aula_27_flutter_exercicio_dupla/pages/register_page.dart';
-import 'package:aula_27_flutter_exercicio_dupla/repository/user_repository.dart';
+import 'package:aula_27_flutter_exercicio_dupla/repository/user_reposito.dart';
+/* import 'package:aula_27_flutter_exercicio_dupla/repository/user_repository.dart'; */
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,12 +13,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  UserRepository repository;
+  UserReposito repository;
 
   @override
   void initState() {
     super.initState();
-    repository = UserRepository(Db());
+    repository = UserReposito(Db());
   }
 
   @override
@@ -26,15 +27,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('Tela de cadastros '),
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pushNamed(HomePage.routeName);
-          },
-        ),
+        backgroundColor: Colors.red,
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<List<User>>(
-        future: repository.getUsers(),
+        future: repository.recoverUser(),
         initialData: null,
         builder: (ctx, snapshot) {
           if (!snapshot.hasData && !snapshot.hasError) {
@@ -54,6 +51,20 @@ class _HomePageState extends State<HomePage> {
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.person,
+                      color: Colors.teal,
+                      size: 40,
+                    ),
+                    title: Text('${snapshot.data[index].name}'),
+                    subtitle: Text('${snapshot.data[index].email}'),
+                  ),
+                  onLongPress: () {
+                    setState(() {
+                      repository.deleteUser(snapshot.data[index].id);
+                    });
+                  },
                   onTap: () {
                     Navigator.of(context).pushNamed(RegisterPage.routeName,
                         arguments: snapshot.data[index]);
