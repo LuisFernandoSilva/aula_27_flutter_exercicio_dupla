@@ -9,7 +9,7 @@ class User {
   String neighborhood;
   String city;
   String state;
-  String country;
+  String country = 'Brasil';
 
   User(
       {this.id,
@@ -43,7 +43,7 @@ class User {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'nome': name,
+      'name': name,
       'email': email,
       'cpf': cpf,
       'cep': cep,
