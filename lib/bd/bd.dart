@@ -32,8 +32,9 @@ class Db {
           cpf text,  
           cep text,
           street text,
-          numberHouse integer,
+          numberHouse text,
           neighborhood text,
+          state text,
           city text,
           country text
 

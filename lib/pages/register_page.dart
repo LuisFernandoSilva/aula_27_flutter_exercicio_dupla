@@ -1,5 +1,8 @@
 import 'package:aula_27_flutter_exercicio_dupla/bd/bd.dart';
 import 'package:aula_27_flutter_exercicio_dupla/entities/user.dart';
+import 'package:aula_27_flutter_exercicio_dupla/pages/home_page.dart';
+import 'package:aula_27_flutter_exercicio_dupla/repository/user_reposito.dart';
+import 'package:aula_27_flutter_exercicio_dupla/repository/user_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:cnpj_cpf_helper/cnpj_cpf_helper.dart';
@@ -13,20 +16,22 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _cpfController = TextEditingController();
-  final _cepController = TextEditingController();
-  final _streetController = TextEditingController();
-  final _numberHouseController = TextEditingController();
-  final _neighborhoodController = TextEditingController();
-  final _cityController = TextEditingController();
-  final _stateController = TextEditingController();
+  TextEditingController _nameController;
+  TextEditingController _emailController;
+  TextEditingController _cpfController;
+  TextEditingController _cepController;
+  TextEditingController _streetController;
+  TextEditingController _numberHouseController;
+  TextEditingController _neighborhoodController;
+  TextEditingController _cityController;
+  TextEditingController _stateController;
+  TextEditingController _countryController;
   String _country = 'Brasil';
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
+  bool edit = false;
   User _user = User();
-  final userRepository = ProductRepository(Db());
+  final userRepository = UserReposito(Db());
 
   @override
   void dispose() {
@@ -40,6 +45,31 @@ class _RegisterPageState extends State<RegisterPage> {
     _cityController.dispose();
     _stateController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final user = ModalRoute.of(context).settings.arguments as User;
+    if (user == null) {
+      edit = true;
+    }
+
+    _nameController = TextEditingController(text: user?.name ?? '');
+    _emailController = TextEditingController(text: user?.email ?? '');
+    _cpfController = TextEditingController(text: user?.cpf ?? '');
+    _cepController = TextEditingController(text: user?.cep ?? '');
+    _streetController = TextEditingController(text: user?.street ?? '');
+    _numberHouseController =
+        TextEditingController(text: user?.numberHouse ?? '');
+    _neighborhoodController =
+        TextEditingController(text: user?.neighborhood ?? '');
+    _cityController = TextEditingController(text: user?.city ?? '');
+    _stateController = TextEditingController(text: user?.state ?? '');
+    _countryController = TextEditingController(text: user?.country ?? '');
+    /* _country = user?.country ?? ''; */
+    /*  _user.name = user?.name ?? null; */
+    _user.id = user?.id ?? null;
   }
 
   void _restart() {
@@ -137,7 +167,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           setState(() {});
                         },
                         onSaved: (newValue) {
-                          user.email = newValue;
+                          _user.email = newValue;
                         },
                       ),
                       SizedBox(height: 8),
@@ -161,7 +191,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return null;
                         },
                         onSaved: (newValue) {
-                          user.cpf = newValue;
+                          _user.cpf = newValue;
                         },
                       ),
                       SizedBox(height: 8),
@@ -186,7 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.cep = newValue;
+                                _user.cep = newValue;
                               },
                             ),
                           ),
@@ -227,7 +257,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.street = newValue;
+                                _user.street = newValue;
                               },
                             ),
                           ),
@@ -248,7 +278,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.numberHouse = newValue;
+                                _user.numberHouse = newValue;
                               },
                             ),
                           ),
@@ -275,7 +305,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.neighborhood = newValue;
+                                _user.neighborhood = newValue;
                               },
                             ),
                           ),
@@ -298,7 +328,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.city = newValue;
+                                _user.city = newValue;
                               },
                             ),
                           ),
@@ -326,7 +356,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 return null;
                               },
                               onSaved: (newValue) {
-                                user.address.state = newValue;
+                                _user.state = newValue;
                               },
                             ),
                           ),
@@ -334,12 +364,15 @@ class _RegisterPageState extends State<RegisterPage> {
                           Expanded(
                             flex: 75,
                             child: TextFormField(
-                              enabled: false,
+                              controller: _countryController,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(),
                                   hintText: 'País',
                                   hintStyle: TextStyle(color: Colors.blue),
                                   labelText: _country),
+                              onSaved: (newValue) {
+                                _user.country = newValue;
+                              },
                             ),
                           ),
                         ],
@@ -363,21 +396,33 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 SizedBox(width: 16),
-                Expanded(
-                  flex: 60,
-                  child: OutlineButton(
-                    child: Text('Cadastrar'),
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        _formKey.currentState.save();
-                        _onSucess();
-                        _dialogInfo();
-                      }
-                    },
-                    borderSide: BorderSide(color: Colors.black),
-                    focusColor: Colors.red,
-                  ),
-                ),
+                edit
+                    ? Expanded(
+                        flex: 60,
+                        child: OutlineButton(
+                          child: Text('Cadastrar'),
+                          onPressed: () {
+                            if (_formKey.currentState.validate()) {}
+                            _formKey.currentState.save();
+                            _saveUser();
+                          },
+                          borderSide: BorderSide(color: Colors.black),
+                          focusColor: Colors.red,
+                        ),
+                      )
+                    : Expanded(
+                        flex: 60,
+                        child: OutlineButton(
+                          child: Text('Editar'),
+                          onPressed: () {
+                            if (_formKey.currentState.validate()) {}
+                            _formKey.currentState.save();
+                            _updateUser();
+                          },
+                          borderSide: BorderSide(color: Colors.black),
+                          focusColor: Colors.red,
+                        ),
+                      ),
               ],
             ),
           ],
@@ -386,40 +431,33 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-//caixa de dialogo quando termina o cadastro
-  void _dialogInfo() {
-    showDialog(
-        context: context,
-        builder: (ctx) {
-          return AlertDialog(
-            title: Text(
-              'Dados: ${user.name}',
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Text(
-                    'ok',
-                  ))
-            ],
-            content: Text('Nome:\n${user.name}\n'
-                'Email:\n ${user.email}\n'
-                'Cpf:\n ${user.cpf}\n'
-                'Endereço:\n'
-                'Rua: ${user.address.street},Numero: ${user.address.numberHouse},\n'
-                'Bairro: ${user.address.neighborhood},Cidade: ${user.address.city}\n'
-                'País: $_country\n'),
-          );
-        });
+  void _saveUser() async {
+    final saved = await userRepository.saveUser(_user);
+
+    userRepository.recoverUser();
+
+    if (!saved) {
+      _showSnackBar("Usuario Criado com sucesso!");
+      return;
+    }
+    Navigator.of(context).pushNamed(HomePage.routeName);
   }
 
-  void _onSucess() {
+  void _updateUser() async {
+    final update = await userRepository.updateUser(_user);
+    if (!update) {
+      _showSnackBar('Não foi possível atualizar a tarefa!');
+      return;
+    }
+    Navigator.of(context).pushNamed(HomePage.routeName);
+  }
+
+  void _showSnackBar(String text) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text("Usuario Criado com sucesso!"),
+      content: Text(text),
       backgroundColor: Colors.red,
       duration: Duration(seconds: 3),
     ));
+    Navigator.of(context).pushNamed(HomePage.routeName);
   }
 }
