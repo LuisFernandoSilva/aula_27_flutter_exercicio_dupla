@@ -22,7 +22,7 @@ class User {
       this.neighborhood,
       this.city,
       this.state,
-      this.country});
+      this.country = 'Brasil'});
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
@@ -54,5 +54,10 @@ class User {
       'state': state,
       'country': country,
     };
+  }
+
+  @override
+  String toString() {
+    return '$email, $cpf \n Endereço:  rua: $street, numero:$numberHouse, cep: $cep, bairro:$neighborhood, cidade:$city, Estado:$state';
   }
 }

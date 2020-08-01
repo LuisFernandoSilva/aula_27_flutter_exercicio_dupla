@@ -1,8 +1,8 @@
 import 'package:aula_27_flutter_exercicio_dupla/bd/bd.dart';
 import 'package:aula_27_flutter_exercicio_dupla/entities/user.dart';
 import 'package:aula_27_flutter_exercicio_dupla/pages/home_page.dart';
-import 'package:aula_27_flutter_exercicio_dupla/repository/user_reposito.dart';
 import 'package:aula_27_flutter_exercicio_dupla/repository/user_repository.dart';
+
 import 'package:dio/dio.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:cnpj_cpf_helper/cnpj_cpf_helper.dart';
@@ -31,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   bool edit = false;
   User _user = User();
-  final userRepository = UserReposito(Db());
+  final userRepository = UserRepository(Db());
 
   @override
   void dispose() {
@@ -67,42 +67,11 @@ class _RegisterPageState extends State<RegisterPage> {
     _cityController = TextEditingController(text: user?.city ?? '');
     _stateController = TextEditingController(text: user?.state ?? '');
     _countryController = TextEditingController(text: user?.country ?? '');
-    /* _country = user?.country ?? ''; */
-    /*  _user.name = user?.name ?? null; */
     _user.id = user?.id ?? null;
   }
-
-  void _restart() {
-    _formKey.currentState.reset();
-    _nameController.clear();
-    _emailController.clear();
-    _cpfController.clear();
-    _cepController.clear();
-    _streetController.clear();
-    _numberHouseController.clear();
-    _neighborhoodController.clear();
-    _cityController.clear();
-    _stateController.clear();
-  }
-
-  void _buscaCep(String cep) async {
-    var dio = Dio();
-    try {
-      var response = await dio.get('https://viacep.com.br/ws/$cep/json');
-      var address = response.data;
-      _streetController.text = address['logradouro'];
-      _neighborhoodController.text = address['bairro'];
-      _cityController.text = address['localidade'];
-      _stateController.text = address['uf'];
-    } catch (e) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text("Cep invalido!"),
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 3),
-      ));
-    }
-  }
+  //TODO Tenta refatorar esses forms do cadastro em um metodo separado,
+  //que retorna um widget e coloca os parametros sejam opcionais,
+  //exemplo widget _input({TextEditingConTroller controller, etc..}){}
 
   @override
   Widget build(BuildContext context) {
@@ -226,7 +195,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             child: RaisedButton.icon(
                               icon: Icon(Icons.search),
                               onPressed: () {
-                                _buscaCep(_cepController.text);
+                                _searchCEP(_cepController.text);
                               },
                               label: Text('buscar'),
                             ),
@@ -431,6 +400,38 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  void _restart() {
+    _formKey.currentState.reset();
+    _nameController.clear();
+    _emailController.clear();
+    _cpfController.clear();
+    _cepController.clear();
+    _streetController.clear();
+    _numberHouseController.clear();
+    _neighborhoodController.clear();
+    _cityController.clear();
+    _stateController.clear();
+  }
+
+  void _searchCEP(String cep) async {
+    var dio = Dio();
+    try {
+      var response = await dio.get('https://viacep.com.br/ws/$cep/json');
+      var address = response.data;
+      _streetController.text = address['logradouro'];
+      _neighborhoodController.text = address['bairro'];
+      _cityController.text = address['localidade'];
+      _stateController.text = address['uf'];
+    } catch (e) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text("Cep invalido!"),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 3),
+      ));
+    }
   }
 
   void _saveUser() async {
