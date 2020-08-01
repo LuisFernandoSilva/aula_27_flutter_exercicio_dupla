@@ -402,9 +402,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: OutlineButton(
                           child: Text('Cadastrar'),
                           onPressed: () {
-                            if (_formKey.currentState.validate()) {}
-                            _formKey.currentState.save();
-                            _saveUser();
+                            if (_formKey.currentState.validate()) {
+                              _formKey.currentState.save();
+                              _saveUser();
+                            }
                           },
                           borderSide: BorderSide(color: Colors.black),
                           focusColor: Colors.red,
@@ -415,9 +416,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: OutlineButton(
                           child: Text('Editar'),
                           onPressed: () {
-                            if (_formKey.currentState.validate()) {}
-                            _formKey.currentState.save();
-                            _updateUser();
+                            if (_formKey.currentState.validate()) {
+                              _formKey.currentState.save();
+                              _updateUser();
+                            }
                           },
                           borderSide: BorderSide(color: Colors.black),
                           focusColor: Colors.red,

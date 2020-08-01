@@ -50,25 +50,56 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) {
-                return GestureDetector(
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.person,
-                      color: Colors.teal,
-                      size: 40,
+                return Dismissible(
+                  key: UniqueKey(),
+                  direction: DismissDirection.startToEnd,
+                  confirmDismiss: (direction) async {
+                    return repository.deleteUser(snapshot.data[index].id);
+                  },
+                  background: Container(
+                    color: Colors.red,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            'Removendo...',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                    title: Text('${snapshot.data[index].name}'),
-                    subtitle: Text('${snapshot.data[index].email}'),
                   ),
-                  onLongPress: () {
-                    setState(() {
-                      repository.deleteUser(snapshot.data[index].id);
-                    });
-                  },
-                  onTap: () {
-                    Navigator.of(context).pushNamed(RegisterPage.routeName,
-                        arguments: snapshot.data[index]);
-                  },
+                  child: GestureDetector(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.person,
+                        color: Colors.teal,
+                        size: 40,
+                      ),
+                      title: Text('${snapshot.data[index].name}'),
+                      subtitle: Text('${snapshot.data[index].email}'),
+                    ),
+                    onLongPress: () {
+/*                       setState(() {
+                        repository.deleteUser(snapshot.data[index].id);
+                      }); */
+                    },
+                    onTap: () {
+                      Navigator.of(context).pushNamed(RegisterPage.routeName,
+                          arguments: snapshot.data[index]);
+                    },
+                  ),
                 );
               },
             ),
@@ -79,6 +110,7 @@ class _HomePageState extends State<HomePage> {
           child: Icon(Icons.add),
           onPressed: () {
             Navigator.of(context).pushNamed(RegisterPage.routeName);
+            setState(() {});
           }),
     );
   }
