@@ -15,16 +15,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   UserRepository repository;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     repository = UserRepository(Db());
+    repository.saveUser(
+      User(
+          cep: '9352941',
+          city: 'Novo Hamburgo',
+          cpf: '01864404051',
+          email: 'henrique99caruso@gmail.com',
+          country: 'Brasil',
+          name: 'Henrique',
+          neighborhood: 'Guarani',
+          numberHouse: '568',
+          state: 'RS',
+          street: 'Julio adams'),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Tela de cadastros '),
         centerTitle: true,
@@ -45,7 +60,7 @@ class _HomePageState extends State<HomePage> {
               child: Text(snapshot.hasError.toString()),
             );
           }
-          //TODO aqui vem um desafio, o evandro fez um dismissible, que guarda por
+          // TODO aqui vem um desafio, o evandro fez um dismissible, que aguarda por
           // 5 segundos os dados que seriam deletados, e fez um snackbar com um aviso
           // que seria deletado o cadastro e colocou um botao de desfazer que se a pessoa
           // tocar nesse botao desfaz a acao de deletar e o cadastro volta rpo listview.
@@ -62,7 +77,45 @@ class _HomePageState extends State<HomePage> {
                   key: UniqueKey(),
                   direction: DismissDirection.startToEnd,
                   confirmDismiss: (direction) async {
-                    return repository.deleteUser(snapshot.data[index].id);
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                              title:
+                                  Text('Exluir ${snapshot.data[index].name}'),
+                              content: Text(
+                                  'Isso irá excluir permanentemente esse item.'),
+                              actions: [
+                                FloatingActionButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Icon(Icons.cancel),
+                                ),
+                                SizedBox(width: 10),
+                                FloatingActionButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      _scaffoldKey.currentState.showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Item excluido com Sucesso.',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          backgroundColor: Colors.red,
+                                          duration: Duration(seconds: 3),
+                                        ),
+                                      );
+                                      setState(() {
+                                        repository.deleteUser(
+                                            snapshot.data[index].id);
+                                      });
+                                    },
+                                    child: Icon(Icons.delete_sweep)),
+                              ]);
+                        });
                   },
                   background: Container(
                     color: Colors.red,
