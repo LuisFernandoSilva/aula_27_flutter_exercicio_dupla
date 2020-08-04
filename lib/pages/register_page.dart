@@ -69,9 +69,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _countryController = TextEditingController(text: user?.country ?? '');
     _user.id = user?.id ?? null;
   }
-  //TODO Tenta refatorar esses forms do cadastro em um metodo separado,
-  //que retorna um widget e coloca os parametros sejam opcionais,
-  //exemplo widget _input({TextEditingConTroller controller, etc..}){}
 
   @override
   Widget build(BuildContext context) {

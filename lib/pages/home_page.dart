@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     repository = UserRepository(Db());
+    /* feito para teste do remove
     repository.saveUser(
       User(
           cep: '9352941',
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
           numberHouse: '568',
           state: 'RS',
           street: 'Julio adams'),
-    );
+    ); */
   }
 
   @override
@@ -60,13 +61,6 @@ class _HomePageState extends State<HomePage> {
               child: Text(snapshot.hasError.toString()),
             );
           }
-          // TODO aqui vem um desafio, o evandro fez um dismissible, que aguarda por
-          // 5 segundos os dados que seriam deletados, e fez um snackbar com um aviso
-          // que seria deletado o cadastro e colocou um botao de desfazer que se a pessoa
-          // tocar nesse botao desfaz a acao de deletar e o cadastro volta rpo listview.
-          //acredito que a logica disso seja ! ele guarda os dados em um list normal e quando acaba o tempo do snack bar
-          //dai sim ele deleta do banco e botao de desfazer e so pra sair da contagem do snackbar!
-          // com isso acho que vai ficar show
 
           return Padding(
             padding: const EdgeInsets.all(8),
@@ -76,47 +70,44 @@ class _HomePageState extends State<HomePage> {
                 return Dismissible(
                   key: UniqueKey(),
                   direction: DismissDirection.startToEnd,
-                  confirmDismiss: (direction) async {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                              title:
-                                  Text('Exluir ${snapshot.data[index].name}'),
-                              content: Text(
-                                  'Isso irá excluir permanentemente esse item.'),
-                              actions: [
-                                FloatingActionButton(
+                  confirmDismiss: (direction) async => showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                            title: Text('Exluir ${snapshot.data[index].name}'),
+                            content: Text(
+                                'Isso irá excluir permanentemente esse item.'),
+                            actions: [
+                              FloatingActionButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Icon(Icons.cancel),
+                              ),
+                              SizedBox(width: 10),
+                              FloatingActionButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
-                                  },
-                                  child: Icon(Icons.cancel),
-                                ),
-                                SizedBox(width: 10),
-                                FloatingActionButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      _scaffoldKey.currentState.showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Item excluido com Sucesso.',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
+                                    _scaffoldKey.currentState.showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Item excluido com Sucesso.',
+                                          style: TextStyle(
+                                            color: Colors.white,
                                           ),
-                                          backgroundColor: Colors.red,
-                                          duration: Duration(seconds: 3),
                                         ),
-                                      );
-                                      setState(() {
-                                        repository.deleteUser(
-                                            snapshot.data[index].id);
-                                      });
-                                    },
-                                    child: Icon(Icons.delete_sweep)),
-                              ]);
-                        });
-                  },
+                                        backgroundColor: Colors.red,
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                    setState(() {
+                                      repository
+                                          .deleteUser(snapshot.data[index].id);
+                                    });
+                                  },
+                                  child: Icon(Icons.delete_sweep)),
+                            ]);
+                      }),
                   background: Container(
                     color: Colors.red,
                     child: Padding(
