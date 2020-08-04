@@ -21,7 +21,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     repository = UserRepository(Db());
-    /* feito para teste do remove
+    //feito para teste do remove
+/* 
     repository.saveUser(
       User(
           cep: '9352941',
@@ -34,7 +35,8 @@ class _HomePageState extends State<HomePage> {
           numberHouse: '568',
           state: 'RS',
           street: 'Julio adams'),
-    ); */
+    ); 
+    */
   }
 
   @override
@@ -79,6 +81,7 @@ class _HomePageState extends State<HomePage> {
                                 'Isso irá excluir permanentemente esse item.'),
                             actions: [
                               FloatingActionButton(
+                                backgroundColor: Colors.red,
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -86,6 +89,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               SizedBox(width: 10),
                               FloatingActionButton(
+                                  backgroundColor: Colors.red,
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                     _scaffoldKey.currentState.showSnackBar(
@@ -155,6 +159,7 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.red,
           child: Icon(Icons.add),
           onPressed: () {
             Navigator.of(context).pushNamed(RegisterPage.routeName);

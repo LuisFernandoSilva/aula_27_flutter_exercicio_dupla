@@ -36,7 +36,7 @@ class User {
       neighborhood: map['neighborhood'],
       city: map['city'],
       state: map['state'],
-      country: map['country'],
+      country: 'Brasil',
     );
   }
 
