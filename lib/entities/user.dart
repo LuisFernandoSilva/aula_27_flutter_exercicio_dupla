@@ -58,6 +58,6 @@ class User {
 
   @override
   String toString() {
-    return '$email, $cpf \n Endereço:  rua: $street, numero:$numberHouse, cep: $cep, bairro:$neighborhood, cidade:$city, Estado:$state';
+    return '$email, cpf: $cpf\nEndereço:\nrua: $street, numero: $numberHouse, cep: $cep, bairro: $neighborhood, cidade: $city, Estado: $state, País: $country';
   }
 }

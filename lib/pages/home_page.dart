@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                                 },
                                 child: Icon(Icons.cancel),
                               ),
-                              SizedBox(width: 10),
+                              SizedBox(width: 20),
                               FloatingActionButton(
                                   backgroundColor: Colors.red,
                                   onPressed: () {
